@@ -10,6 +10,10 @@ const client = new ApolloClient({
 	uri: 'http://localhost:4520',
 });
 
+const initialState = { contactList: null }
+
+client.writeData({ data: initialState });
+
 ReactDOM.render(
 	<React.StrictMode>
 		<ApolloProvider client={client}>
