@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 
 import { Paragraph } from '../../ui/ui';
 import Icon from '../../Icon/Icon';
 import { useMemo } from 'react';
+import { GET_CONTACT_LIST } from '../../../Apollo/Queries/contactListQueries';
 
 const DEFAULT_URL =
   'https://api.adorable.io/avatars/face/eyes4/nose3/mouth7/8e8895';
@@ -17,13 +17,6 @@ const StyledContactList = styled.div`
   overflow: scroll;
   height: 90%;
   border-top: 1px solid #dcdcdc;
-}
-
-
-
-
-
-
 `;
 
 const StyledItem = styled.div`
@@ -58,17 +51,6 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-const GET_CONTACT_LIST = gql`
-  {
-    contactList @client {
-      id
-      firstName
-      lastName
-      phone
-      email
-    }
-  }
-`;
 
 const filterList = (data, searchValue) => {
   const value = searchValue.trim().toLowerCase();

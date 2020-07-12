@@ -1,17 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import MainScreen from '../MainScreen/MainScreen';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { useEffect } from 'react';
 
-const SCREEN_HEIGHT = 500;
-const SCREENS_NUMBER = 3;
-const SCREEN_INDEXES = {
-  contactForm: 0,
-  mainScreen: 1,
-  contactProfile: 2,
-};
+import MainScreen from '../MainScreen/MainScreen';
+import ContactForm from '../ContactForm/ContactForm';
+
+import { SCREEN_HEIGHT, SCREENS_NUMBER, SCREEN_INDEXES } from '../constants';
 
 const SCREENS_WRAPPER_HEIGHT = SCREEN_HEIGHT * SCREENS_NUMBER;
 
@@ -37,6 +33,7 @@ const StyledScreen = styled.div`
 const GET_CONTACT_LIST = gql`
   {
     contacts {
+      id
       firstName
       lastName
       phone
@@ -52,27 +49,30 @@ const Contacts = () => {
   );
   const { loading, error, data } = useQuery(GET_CONTACT_LIST);
 
-  const handlePlusClick = () => {
-    setCurrentScreenIndex(SCREEN_INDEXES.contactForm);
-  };
-
   useEffect(() => {
-    const contactList = data?.contacts?.map((contact, id) => ({
+    const contactList = data?.contacts?.map(contact => ({
       ...contact,
-      id,
       __typename: 'Contact',
     }));
     console.log(contactList);
     client.writeData({ data: { contactList } });
   }, [client, data]);
 
+  const handlePlusClick = () => {
+    setCurrentScreenIndex(SCREEN_INDEXES.contactForm);
+  };
+
   return (
     <StyledContacts>
       <StyledScreensWrapper bottom={currentScreenIndex * SCREEN_HEIGHT}>
-        <StyledScreen />
         <StyledScreen>
-          <MainScreen
-            handlePlusClick={handlePlusClick} />
+          <ContactForm setCurrentScreenIndex={setCurrentScreenIndex}/>
+        </StyledScreen>
+        <StyledScreen>
+          {loading ?
+            <div>Loading..</div> :
+            <MainScreen
+            handlePlusClick={handlePlusClick} />}
         </StyledScreen>
         <StyledScreen />
       </StyledScreensWrapper>
